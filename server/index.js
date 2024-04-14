@@ -21,6 +21,7 @@ async function startApolloServer() {
                 id: ID!
                 title: String!
                 completed: Boolean
+                user: User
             }
 
             type Query {
@@ -30,6 +31,25 @@ async function startApolloServer() {
             }
         `,
         resolvers:{
+            Todo: {
+                // so we are getting the todo as an argument and then we are making a request to the user endpoint
+                // and then we are getting the user data for that corresponding todo
+                // by using the userId field in the todo object
+                user: async (todo) => 
+                    (await axios.get(`https://jsonplaceholder.typicode.com/users/${todo.userId}`)).data,
+
+                    // Query used here to get the user data for that corresponding todo
+                    // query GetAllTodos {
+                    //     getTodos {
+                    //       title
+                    //       completed
+                    //       user {
+                    //         name
+                    //         email
+                    //       }
+                    //     }
+                    //   }
+            },
             Query: {
                 getTodos: async () => 
                     (await axios.get('https://jsonplaceholder.typicode.com/todos')).data,
